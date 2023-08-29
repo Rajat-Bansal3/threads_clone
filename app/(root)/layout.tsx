@@ -9,7 +9,8 @@ import Bottombar from "@/components/shared/Bottombar";
 
 export const metadata = {
   title: "Threads",
-  description:"Threads clone by Rajat using nextjs ,tailwind ,typescript , clerk etc"
+  description:
+    "Threads clone by Rajat using nextjs ,tailwind ,typescript , clerk etc",
 };
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,24 +21,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+    // appearance={{
+    //   // baseTheme: dark,
+    // }}
+    >
       <html lang="en">
-        <body className={`${inter} bg-dark-1`}>
+        <body className={inter.className}>
           <Topbar />
 
-          <section >
-            <LeftSidebar/>
-              <section className="main-container">
-                <div className="w-full max-w-4xl">
-                  {children}
-                </div>
-              </section>
+          <main className="flex flex-row">
+            <LeftSidebar />
+            <section className="main-container">
+              <div className="w-full max-w-4xl">{children}</div>
+            </section>
+            {/* @ts-ignore */}
             <RightSidebar />
-          </section>
+          </main>
 
           <Bottombar />
-          
-          {children}
         </body>
       </html>
     </ClerkProvider>
