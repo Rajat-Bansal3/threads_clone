@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 let isConnected = false;
 
-export const connectedToDB = async () => {
+export const connectToDB = async () => {
   mongoose.set("strictQuery", true);
 
   if (!process.env.MONGODB_URL) return console.log("Not connected to Mongo");
