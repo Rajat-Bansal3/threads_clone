@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 import { revalidatePath } from "next/cache";
 import Thread from "../models/thread.model";
@@ -26,4 +26,33 @@ export async function createThread({
   });
 
   revalidatePath(path);
+}
+
+export async function fetchPosts(pageNumber = 1, pageSize = 20) {
+  await connectToDB();
+
+  const skippedammount = (pageNumber - 1) * pageSize;
+
+  const postsQuery = Thread.find({ parentId: { $in: [null, undefined] } })
+    .sort({ createdAt: "descending" })
+    .skip(skippedammount)
+    .limit(pageSize)
+    .populate({ path: "author", model: User })
+    .populate({
+      path: "children",
+      populate: {
+        path: "author",
+        model: User,
+        select: "_id name parentId image",
+      },
+    });
+
+    const totalPost = await Thread.countDocuments({ parentId: { $in: [null, undefined] } })
+
+    const posts = await postsQuery.exec();
+
+    const isNext = totalPost > skippedammount + posts.length;
+
+    return {posts , isNext}
+
 }
