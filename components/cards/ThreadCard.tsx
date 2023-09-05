@@ -66,8 +66,7 @@ function ThreadCard({
                 </p>
                 <div className="mt-5 flex flex-col gap-3">
                   <div
-                    className="flex gap3.5
-                          "
+                    className="flex gap3.5"
                   ></div>
                 </div>
               </div>
