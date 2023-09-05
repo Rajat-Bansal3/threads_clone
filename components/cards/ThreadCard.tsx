@@ -1,3 +1,5 @@
+// implement share repost and like functions
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,9 +22,9 @@ interface Props {
   comments: {
     author: {
       image: string;
-    }[];
-    isComment: boolean;
-  };
+    };
+  }[];
+  isComment: boolean;
 }
 
 function ThreadCard({
@@ -34,6 +36,7 @@ function ThreadCard({
   communnity,
   createdAt,
   comments,
+  isComment,
 }: Props) {
   {
     return (
@@ -65,9 +68,46 @@ function ThreadCard({
                   {content}
                 </p>
                 <div className="mt-5 flex flex-col gap-3">
-                  <div
-                    className="flex gap3.5"
-                  ></div>
+                  <div className="flex gap3.5">
+                    <Image
+                      src="/assets/heart-gray.svg"
+                      alt="heart"
+                      width={24}
+                      height={24}
+                      className="cursor-poiter object-contain"
+                    />
+                    <Link href={`/thread/${id}`}>
+                      <Image
+                        src="/assets/reply.svg"
+                        alt="reply"
+                        width={24}
+                        height={24}
+                        className="cursor-poiter object-contain"
+                      />
+                    </Link>
+                    <Image
+                      src="/assets/repost.svg"
+                      alt="repost"
+                      width={24}
+                      height={24}
+                      className="cursor-poiter object-contain"
+                    />
+
+                    <Image
+                      src="/assets/share.svg"
+                      alt="share"
+                      width={24}
+                      height={24}
+                      className="cursor-poiter object-contain"
+                    />
+                  </div>
+                  {isComment && Comment.length > 0 && (
+                    <Link href={`/thread/${id}`}>
+                      <p className="mt-1 text-subtle-medium text-gray-1">
+                        {Comment.length} replies
+                      </p>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

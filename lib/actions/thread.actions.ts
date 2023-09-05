@@ -47,12 +47,50 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
       },
     });
 
-    const totalPost = await Thread.countDocuments({ parentId: { $in: [null, undefined] } })
+  const totalPost = await Thread.countDocuments({
+    parentId: { $in: [null, undefined] },
+  });
 
-    const posts = await postsQuery.exec();
+  const posts = await postsQuery.exec();
 
-    const isNext = totalPost > skippedammount + posts.length;
+  const isNext = totalPost > skippedammount + posts.length;
 
-    return {posts , isNext}
+  return { posts, isNext };
+}
 
+export async function fetchThreadbyId(id: string) {
+  await connectToDB();
+
+  try {
+    const thread = await Thread.findById(id)
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "children",
+        populate: [
+          {
+            path: "author",
+            model: User,
+            select: "_id id name  parentId image",
+          },
+          {
+            path: "children",
+            model: Thread,
+            populate: {
+              path: "author",
+              model: User,
+              select: "_id id name parentId image",
+            },
+          },
+        ],
+      })
+      .exec();
+
+    return thread;
+  } catch (error: any) {
+    throw new Error(`Error fetching thread ${error.message}`);
+  }
 }
