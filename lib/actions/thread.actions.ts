@@ -94,3 +94,5 @@ export async function fetchThreadbyId(id: string) {
     throw new Error(`Error fetching thread ${error.message}`);
   }
 }
+
+export async function addCommenttoThread(){} //going to complete this later
