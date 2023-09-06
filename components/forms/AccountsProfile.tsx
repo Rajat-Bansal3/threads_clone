@@ -50,7 +50,7 @@ const AccountsProfile = ({ user, btnTitle }: Props) => {
     },
   });
 
-  const handleImage = (
+  const handleImage = ( 
     e: ChangeEvent<HTMLInputElement>,
     fieldChange: (value: string) => void
   ) => {

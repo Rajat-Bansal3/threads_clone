@@ -12,6 +12,13 @@ interface Params {
   path: string;
 }
 
+interface props {
+  threadId: string;
+  commentText: string;
+  userId: string;
+  path: string;
+}
+
 export async function createThread({
   text,
   author,
@@ -58,31 +65,31 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   return { posts, isNext };
 }
 
-export async function fetchThreadbyId(id: string) {
-  await connectToDB();
+export async function fetchThreadbyId(threadId: string) {
+  connectToDB();
 
   try {
-    const thread = await Thread.findById(id)
+    const thread = await Thread.findById(threadId)
       .populate({
         path: "author",
         model: User,
         select: "_id id name image",
       })
       .populate({
-        path: "children",
+        path: "children", 
         populate: [
           {
             path: "author",
             model: User,
-            select: "_id id name  parentId image",
+            select: "_id id name parentId image",
           },
           {
             path: "children",
-            model: Thread,
+            model: Thread, 
             populate: {
-              path: "author",
+              path: "author", 
               model: User,
-              select: "_id id name parentId image",
+              select: "_id id name parentId image", 
             },
           },
         ],
@@ -90,9 +97,35 @@ export async function fetchThreadbyId(id: string) {
       .exec();
 
     return thread;
-  } catch (error: any) {
-    throw new Error(`Error fetching thread ${error.message}`);
+  } catch (err) {
+    console.error("Error while fetching thread:", err);
+    throw new Error("Unable to fetch thread");
   }
 }
 
-export async function addCommenttoThread(){} //going to complete this later
+export async function addCommenttoThread({
+  threadId,
+  commentText,
+  userId,
+  path}:props) {
+  await connectToDB();
+  try {
+    const ogThread = await fetchThreadbyId(threadId);
+
+    if (!ogThread) throw new Error(`Thread not found `);
+
+    const commentThread = new Thread({
+      text: commentText,
+      author: userId,
+      parentId: threadId,
+    });
+
+    const saveCommentThread = await commentThread.save();
+
+    ogThread.children.push(saveCommentThread._id);
+
+    revalidatePath(path);
+  } catch (error: any) {
+    console.log(error.message);
+  }
+}
