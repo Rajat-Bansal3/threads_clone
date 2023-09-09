@@ -44,7 +44,7 @@ const Page = async () => {
                   id={person.id}
                   name={person.name}
                   username={person.username}
-                  imageUrl={person.imgurl}
+                  imageUrl={person.imgUrl}
                   personType="User"
                 />
               ))}
