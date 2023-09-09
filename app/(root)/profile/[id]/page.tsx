@@ -1,11 +1,12 @@
+
+
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import ThreadsTab from "@/components/shared/ThreadsTab";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { connectToDB } from "@/lib/mongoose";
 import { currentUser } from "@clerk/nextjs";
-import { TabsContent } from "@radix-ui/react-tabs";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
@@ -15,7 +16,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
 
   const userinfo = await fetchUser(params.id);
 
-  if (userinfo?.onboarded) redirect("/onboarding");
+  if (!userinfo?.onboarded) redirect("/onboarding");
 
   return (
     <>
@@ -29,7 +30,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
       />
 
       <div className="mt-9">
-        <Tabs defaultValue="Threads" className="w-full">
+        <Tabs defaultValue="threads" className="w-full">
           <TabsList className="tab">
             {profileTabs.map((tab) => (
               <TabsTrigger key={tab.label} value={tab.value} className="tab">

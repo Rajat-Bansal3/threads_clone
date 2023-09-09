@@ -99,12 +99,13 @@ export async function fetchUsers({
 }) {
   try {
     connectToDB();
-
     const skipAmount = (pageNumber - 1) * pageSize;
 
     const regex = new RegExp(searchString, "i");
 
-    const query: FilterQuery<typeof User> = {};
+    const query: FilterQuery<typeof User> = {
+      id: { $ne: userId },
+    };
 
     if (searchString.trim() !== "") {
       query.$or = [
@@ -114,22 +115,19 @@ export async function fetchUsers({
     }
 
     const sortOptions = { createdAt: sortBy };
-
     const usersQuery = User.find(query)
       .sort(sortOptions)
       .skip(skipAmount)
       .limit(pageSize);
 
     const totalUsersCount = await User.countDocuments(query);
-
     const users = await usersQuery.exec();
 
     const isNext = totalUsersCount > skipAmount + users.length;
 
     return { users, isNext };
-  } catch (error) {
-    console.error("Error fetching users:", error);
-    throw error;
+  } catch (error: any) {
+    throw new Error(`Error fetching Users: ${error.message}`);
   }
 }
 
@@ -152,7 +150,7 @@ export async function getActivity(userId: string) {
       select: "name image _id",
     });
 
-    return replies;
+    return replies; 
   } catch (error) {
     console.error("Error fetching replies: ", error);
     throw error;
